@@ -1,0 +1,22 @@
+# Secrets — never commit
+token.txt
+.dashboard_token
+do-function/
+
+# Local-only artifacts — not part of the deployed app, stay on this Mac
+valtown/
+run_digest.py
+*.log
+last_claude_stdout.json
+last_claude_stderr.txt
+last_result.txt
+latest.json
+salvaged_findings.json
+2026-07-*.md
+PLAN.md
+STATUS.md
+
+# Standard junk
+__pycache__/
+*.pyc
+.DS_Store
