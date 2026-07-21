@@ -294,6 +294,12 @@ class Handler(BaseHTTPRequestHandler):
         p = urlparse(self.path)
         q = parse_qs(p.query)
 
+        # Keep-alive health check — NO auth, NO DB, cheap. An external cron pings
+        # this every ~5 min so Render's free tier never spins down (15-min idle).
+        if p.path in ("/health", "/healthz"):
+            self._send("ok", 200, {"Content-Type": "text/plain; charset=utf-8"})
+            return
+
         if p.path == "/login":
             err = '<div class="err">Wrong token, try again.</div>' if q.get("err") else ""
             self._send(LOGIN_PAGE.format(error=err))
