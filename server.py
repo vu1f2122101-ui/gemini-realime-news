@@ -290,6 +290,17 @@ class Handler(BaseHTTPRequestHandler):
         sid = cookie.get("sid")
         return bool(sid and sid.value in _SESSIONS)
 
+    def do_HEAD(self):
+        # Uptime monitors (UptimeRobot etc.) send HEAD by default. Without this,
+        # Python's base server returns 501 "Unsupported method" and the monitor
+        # falsely reports the site as down. Answer headers-only with a 200.
+        p = urlparse(self.path)
+        code = 200 if p.path in ("/health", "/healthz", "/", "/index.html", "/login") else 404
+        self.send_response(code)
+        self.send_header("Content-Type", "text/plain; charset=utf-8")
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
     def do_GET(self):
         p = urlparse(self.path)
         q = parse_qs(p.query)
